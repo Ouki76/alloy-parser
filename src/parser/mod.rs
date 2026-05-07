@@ -7,6 +7,7 @@ use tokio::io::{AsyncBufReadExt, BufReader};
 use url::Url;
 
 pub struct Item {
+    pub uuid: String,
     pub host: Option<String>,
     pub port: Option<u16>,
     pub params: Vec<(Box<str>, Box<str>)>,
@@ -27,6 +28,7 @@ where
         if let Ok(url) = Url::parse(&line) {
             // Create item
             let item = Item {
+                uuid: url.username().to_string(),
                 host: url.host().map(|h| h.to_string()),
                 port: url.port(),
                 params: url
@@ -112,6 +114,11 @@ vless://22222222-d105-4ee4-b904-1f6ed8417f4d@google.com:8443?path=/ws&host=cdn.g
 
         // Count
         assert_eq!(items.len(), 3);
+
+        // UUIDs
+        assert_eq!(items[0].uuid, "7d3e6808-d105-4ee4-b904-1f6ed8417f4d");
+        assert_eq!(items[1].uuid, "11111111-d105-4ee4-b904-1f6ed8417f4d");
+        assert_eq!(items[2].uuid, "22222222-d105-4ee4-b904-1f6ed8417f4d");
 
         // Hosts
         assert_eq!(items[0].host.as_deref(), Some("8.218.32.188"));
