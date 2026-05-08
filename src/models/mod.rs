@@ -5,6 +5,7 @@ pub struct Item {
     pub uuid: String,
     pub host: Option<String>,
     pub port: Option<u16>,
+    pub fragment: Option<String>,
     pub params: Vec<(Box<str>, Box<str>)>,
 }
 
@@ -15,6 +16,7 @@ impl From<Item> for Url {
         let mut url = Url::parse(&format!("{}://{}@{}", value.scheme, value.uuid, host)).unwrap();
 
         url.set_port(value.port).unwrap();
+        url.set_fragment(value.fragment.as_deref());
 
         {
             let mut pairs = url.query_pairs_mut();
@@ -35,6 +37,7 @@ fn item_into_url() {
         uuid: "7d3e6808-d105-4ee4-b904-1f6ed8417f4d".to_string(),
         host: Some("8.218.32.188".to_string()),
         port: Some(3004),
+        fragment: Some("Nl".to_string()),
         params: vec![
             ("type".into(), "ws".into()),
             ("host".into(), "speedtest.net".into()),
@@ -46,6 +49,7 @@ fn item_into_url() {
     assert_eq!(url.scheme(), "vless");
     assert_eq!(url.username(), "7d3e6808-d105-4ee4-b904-1f6ed8417f4d");
     assert_eq!(url.host_str(), Some("8.218.32.188"));
+    assert_eq!(url.fragment(), Some("Nl"));
     assert_eq!(url.port(), Some(3004));
 
     assert_eq!(

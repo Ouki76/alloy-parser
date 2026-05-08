@@ -25,6 +25,7 @@ where
                 uuid: url.username().to_owned(),
                 host: url.host().map(|h| h.to_string()),
                 port: url.port(),
+                fragment: url.fragment().map(|f| f.to_string()),
                 params: url
                     .query_pairs()
                     .map(|(k, v)| {
@@ -123,6 +124,11 @@ vless://22222222-d105-4ee4-b904-1f6ed8417f4d@google.com:8443?path=/ws&host=cdn.g
         assert_eq!(items[0].port, Some(3004));
         assert_eq!(items[1].port, Some(443));
         assert_eq!(items[2].port, Some(8443));
+
+        // Fragment
+        assert_eq!(items[0].fragment.as_deref(), Some("0025"));
+        assert_eq!(items[1].fragment.as_deref(), Some("cloudflare"));
+        assert_eq!(items[2].fragment, None);
 
         // Params
         assert_eq!(
